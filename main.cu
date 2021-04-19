@@ -54,15 +54,20 @@ void benchmark_sort(func_t<key_t, value_t> *f, size_t N, const char *name=nullpt
   auto stop_gpu = high_resolution_clock::now();
   auto duration_cpu = double(duration_cast<microseconds>(stop_cpu - start).count()) / ntrials;
   auto duration_gpu = double(duration_cast<microseconds>(stop_gpu - start).count()) / ntrials;
+
   if (name != nullptr) {
     std::cout << "[" << name << "] ";
+  }
+  if (auto err = cudaGetLastError(); err != cudaSuccess) {
+    std::cerr << cudaGetErrorString(err) << std::endl;
+    return;
   }
   if (check_correctness(d_keys_in, d_keys_out, d_values_in, d_values_out, N)) {
     std::cout << "problem_size: " << N << ", ";
     std::cout << "cpu time: " << duration_cpu << ", ";
     std::cout << "gpu time: " << duration_gpu << std::endl;
   } else {
-    std::cout << "error" << std::endl;
+    std::cout << "wrong results" << std::endl;
   }
 }
 
