@@ -100,6 +100,6 @@ void benchmark_sort(func_t<key_t, value_t> *f, size_t N, const char *name=nullpt
 
 int main() {
   cudaMalloc(&tmp_storage, max_temp_storage_bytes);
-  benchmark_sort(cub_sort<int64_t, int64_t>, 1024, "cub_sort<int64_t, int64_t>");
-  benchmark_sort(thrust_sort<int64_t, int64_t>, 1024, "thrust_sort<int64_t, int64_t>");
+  benchmark_sort(cub_sort<int64_t, float>, 100, "cub_sort<int64_t, int64_t>");
+  benchmark_sort(thrust_sort<int64_t, float>, 100, "thrust_sort<int64_t, int64_t>");
 }
