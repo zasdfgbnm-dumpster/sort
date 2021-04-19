@@ -47,9 +47,9 @@ void cub_sort(const key_t *keys_in, key_t *keys_out, const value_t *values_in, v
 template<typename key_t, typename value_t>
 void thrust_sort(const key_t *keys_in, key_t *keys_out, const value_t *values_in, value_t *values_out, size_t N) {
   ThrustAllocator thrust_allocator;
-  auto policy = thrust::cuda::par(thrust_allocator);
-  cudaMemcpyAsync(keys_out, keys_in, sizeof(key_t) * N, cudaMemcpyDefault);
-  cudaMemcpyAsync(values_out, values_in, sizeof(value_t) * N, cudaMemcpyDefault);
+  auto policy = thrust::cuda::par(thrust_allocator).on(0);
+  thrust::copy(policy, keys_in, keys_in + N, keys_out);
+  thrust::copy(policy, values_in, values_in + N, values_out);
   thrust::sort_by_key(policy, keys_out, keys_out + N, values_out, []__device__(key_t a, key_t b) { return a < b; });
 }
 
