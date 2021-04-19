@@ -14,7 +14,8 @@ size_t max_temp_storage_bytes = 1024 * 1024 * 1024;
 void *tmp_storage = nullptr;
 
 template<typename key_t, typename value_t>
-void check_correctness(const key_t *keys_in, key_t *keys_out, const value_t *values_in, value_t *values_out, size_t N) {
+bool check_correctness(const key_t *keys_in, key_t *keys_out, const value_t *values_in, value_t *values_out, size_t N) {
+  return true;
 }
 
 template<typename key_t, typename value_t>
@@ -53,13 +54,16 @@ void benchmark_sort(func_t<key_t, value_t> *f, size_t N, const char *name=nullpt
   auto stop_gpu = high_resolution_clock::now();
   auto duration_cpu = double(duration_cast<microseconds>(stop_cpu - start).count()) / ntrials;
   auto duration_gpu = double(duration_cast<microseconds>(stop_gpu - start).count()) / ntrials;
-  check_correctness(d_keys_in, d_keys_out, d_values_in, d_values_out, N);
   if (name != nullptr) {
     std::cout << "[" << name << "] ";
   }
-  std::cout << "problem_size: " << N << ", ";
-  std::cout << "cpu time: " << duration_cpu << ", ";
-  std::cout << "gpu time: " << duration_gpu << std::endl;
+  if (check_correctness(d_keys_in, d_keys_out, d_values_in, d_values_out, N)) {
+    std::cout << "problem_size: " << N << ", ";
+    std::cout << "cpu time: " << duration_cpu << ", ";
+    std::cout << "gpu time: " << duration_gpu << std::endl;
+  } else {
+    std::cout << "error" << std::endl;
+  }
 }
 
 int main() {
